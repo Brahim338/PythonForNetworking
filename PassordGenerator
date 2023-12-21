@@ -1,1 +1,278 @@
+import random
+import string
+# import smtplib
+# import netmiko 
+# from netmiko import ConnectHandler
+from datetime import date
+#import threding 
+import sys, time, datetime
+from prettytable import PrettyTable
+import os
+import sys
+# import getpass
+import platform
+# import  socket
+import  time 
+# from pprint import pprint
+# from tkinter import filedialog as fd 
+# from tkinter import *
+# from queue import Queue
+# import threading
+import re
+# import getpass 
+# from configparser import ConfigParser 
+from time import sleep 
+# from rich.console import Console
+# import smtplib
+# import mimetypes
+# from email.mime.multipart import MIMEMultipart
+# from email import encoders
+# from email.message import Message
+# from email.mime.audio import MIMEAudio
+# from email.mime.base import MIMEBase
+# from email.mime.image import MIMEImage
+# from email.mime.text import MIMEText
+# import pandas as pd
+# import logging
 
+
+# from tkinter import messagebox
+
+__platform = ((platform.system()))
+
+
+
+
+
+color = {
+    'white':    "\033[1;37m",
+    'yellow':   "\033[1;33m",
+    'green':    "\033[1;32m",
+    'blue':     "\033[1;34m",
+    'cyan':     "\033[1;36m",
+    'red':      "\033[1;31m",
+    'magenta':  "\033[1;35m",
+    'black':      "\033[1;30m",
+    'darkwhite':  "\033[0;37m",
+    'darkyellow': "\033[0;33m",
+    'darkgreen':  "\033[0;32m",
+    'darkblue':   "\033[0;34m",
+    'darkcyan':   "\033[0;36m",
+    'darkred':    "\033[0;31m",
+    'darkmagenta':"\033[0;35m",
+    'darkblack':  "\033[0;30m",
+    'off':        "\033[0;0m"
+}
+
+
+R = '\033[1;31m'
+G = '\033[1;32m'
+Y = '\033[1;33m'
+C = '\033[1;36m'
+W = '\033[1;37m'
+
+
+
+
+CEND      = '\33[0m'
+CBOLD     = '\33[1m'
+CITALIC   = '\33[3m'
+CURL      = '\33[4m'
+CBLINK    = '\33[5m'
+CBLINK2   = '\33[6m'
+CSELECTED = '\33[7m'
+
+
+CBLACKBG  = '\33[40m'
+CREDBG    = '\33[41m'
+CGREENBG  = '\33[42m'
+CYELLOWBG = '\33[43m'
+CBLUEBG   = '\33[44m'
+CVIOLETBG = '\33[45m'
+CBEIGEBG  = '\33[46m'
+CWHITEBG  = '\33[47m'
+
+CGREY    = '\33[90m'
+CRED2    = '\33[91m'
+CGREEN2  = '\33[92m'
+CYELLOW2 = '\33[93m'
+CBLUE2   = '\33[94m'
+CVIOLET2 = '\33[95m'
+CBEIGE2  = '\33[96m'
+CWHITE2  = '\33[97m'
+
+CGREYBG    = '\33[100m'
+CREDBG2    = '\33[101m'
+CGREENBG2  = '\33[102m'
+CYELLOWBG2 = '\33[103m'
+CBLUEBG2   = '\33[104m'
+CVIOLETBG2 = '\33[105m'
+CBEIGEBG2  = '\33[106m'
+CWHITEBG2  = '\33[107m'
+
+fistlogoclor = "\033[1;37m"
+fistlogoclor = "\033[1;34m"
+
+secondlogocolor= "\033[1;94m"
+secondlogocolor= "\033[1;94m"
+
+CBLACK  = '\33[30m'
+CRED    = '\33[31m'
+CGREEN  = '\33[32m'
+CYELLOW = '\33[33m'
+CBLUE   = '\33[34m'
+CVIOLET = '\33[35m'
+CBEIGE  = '\33[36m'
+CWHITE  = '\33[37m'
+
+
+
+# if __platform =="Windows" : 
+
+#     os.system('cls')
+# else : 
+#     os.system('clear')
+
+
+
+
+
+
+def generatePassword() : 
+    passwords = [] 
+    def passwordGen(length):
+         
+        lower = string.ascii_lowercase
+        upper = string.ascii_uppercase
+        digits = string.digits
+        symbols = string.punctuation
+      
+        filtredSymbols =[]
+        for sy in symbols : 
+            if sy !="?" and sy !="!" :  
+                filtredSymbols.append(sy)
+
+        filtredSymbols = "".join(filtredSymbols)
+        
+
+
+        comb = lower + upper + digits + filtredSymbols
+
+        result_str = ''.join(random.choice(comb) for i in range(length))
+        # print(result_str)
+
+        passwords.append(result_str)
+
+
+    # for i in range(30) :
+        
+
+
+
+
+
+    def hprint(s , speed=8/5000 ):
+        
+        for c in s + '\n':
+            sys.stdout.write(c)
+            sys.stdout.flush()
+            sleep(speed)
+
+     
+
+
+    def main()  : 
+
+        exit = False 
+        if __platform =="Windows" : 
+            os.system('cls')
+        else : 
+            os.system('clear')
+        # print(exit
+        # while not exit : 
+
+        name =f"""
+    {C} _ __    __ _  ___  ___ __      __  ___   _ __   __| | {CRED}  / ___|  ___  _ __    ___  _ __   __ _ | |_   ___   _ __
+    {C}| '_ \  / _` |/ __|/ __|\ \ /\ / / / _ \ | '__| / _` | {CRED} | |  _  / _ \| '_ \  / _ \| '__| / _` || __| / _ \ | '__|
+    {C}| |_) || (_| |\__ \\__ \  \ V  V / | (_) || |   | (_| | {CRED} | |_| ||  __/| | | ||  __/| |   | (_| || |_ | (_) || |
+    {C}| .__/  \__,_||___/|___/  \_/\_/   \___/ |_|    \__,_| {CRED}  \____| \___||_| |_| \___||_|    \__,_| \__| \___/ |_|
+    {C}|_|
+
+            {W}"""
+
+        print(name)
+        hprint(f'                        {C} Passwords Generator V 1.0 {W}')                        
+        print('\n'*2)
+
+     
+
+
+    main()
+
+
+
+    length = (input(f" {R}[ + ]{C} Please define the length of the passwords : {Y} "))
+
+    while not length.isdigit() :
+        print()
+        print(f'{R} [ + ] You have to choose a valid number: ')
+        length = (input(f" {R}[ + ]{C} Please define a  valid  length number of the passwords : {Y} "))
+
+
+
+    print()
+
+    number = input(f" {R}[ + ]{C} How many password do you want to generate : {Y}  ")
+    while not number.isdigit() :
+        print()
+        print(f'{R} [ + ] You have to choose a valid number: ')
+        print()
+        number = input(f" {R}[ + ]{C} plase define a valid number of  password to generate : {Y}  ")
+        
+
+    print()
+
+
+
+
+
+    for i  in  range (int(number)) : 
+        passwordGen(int((length)))  
+
+
+    print() 
+
+
+    answer = input(f'{R}[ {W}+ {R}]  {C} [ + ] do wanna export these password to a txt File [Y/N] :{Y}') 
+    while answer.lower() not in ['y','n'] : 
+        print(f'[ + ] You have to choose Y or N ')
+        answer = input(f'{R}[ {W}+ {R}]  {C} [ + ] do wanna export these password to a txt File [Y/N] :{Y}') 
+
+
+    if answer.lower() == 'y' : 
+        new_name = input('Please rename the txt file the default name  will be named [file.txt] :')
+        if new_name != "" : 
+
+            with open(f'{new_name}.txt','w') as f  : 
+                for i in passwords :   
+                    f.write(i+'\n') 
+            print()
+            print(f'{R}[ {W}+ {R}]  {C} passwords are saved succefully to {os.getcwd()}\\{new_name}.txt')
+            passwords=[]
+        else : 
+            with open(f'file.txt','w') as f  : 
+                for i in passwords :   
+                    f.write(i+'\n') 
+            print()
+            print(f'{R}[ {W}+ {R}]  {C} passwords are saved succefully to {os.getcwd()}\\file.txt')
+
+            passwords=[]
+
+    print()
+    input('Press any key to quit')
+
+
+if __name__ =='__main__' : 
+    print('imported succefully')
+
+     
