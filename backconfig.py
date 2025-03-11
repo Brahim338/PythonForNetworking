@@ -14,17 +14,7 @@ def back(device) :
 	try : 
 		print(f'[ + ]  Connected to device {device}  [ + ]')
 
-		# if device =="10.159.100.18" :
-
-
-		# 	sshCli = ConnectHandler(
-		# 		device_type = 'cisco_ios',
-		# 		host =device,
-		# 		port = 23,
-		# 		username =  username,
-		# 		password =  password, 
-		# 		                    ) 
-
+	
 		sshCli = ConnectHandler(
 			device_type = 'cisco_ios',
 			host =device,
@@ -33,7 +23,7 @@ def back(device) :
 			password =  'admin', 
 			auth_timeout=60,
 			                    ) 
-		# def backup () : 
+		  
 
 	
 
@@ -41,11 +31,7 @@ def back(device) :
 		hostname = sshCli.send_command('sh run | in hostname'  ,read_timeout=200).split()[1]
 		hostname = sshCli.send_command('wr'  ,read_timeout=200)
 		
-		# for i in range (11,100) : 
-
-		# 	print(sshCli.send_config_set([f'int lo {i}',f'ip add 150.1.{i}.{i} 255.255.255.255','router bgp 100',f'network 150.1.{i}.{i} mask 255.255.255.255']) )
-
-		
+		 
 
 		if (os.path.isdir(f'{hostname}')) : 
 			pass 
@@ -127,15 +113,11 @@ def ListDevices() :
  
 
 
-
-
-# allDevices = ATMs + routersSites + routersBranches + SwitchBRANCHES + switchBMR2 + SwitchBMR1 + SwitchDRC + routersInternet
-
-
+ 
+# here you can define the list of you network devices 
 
 allDevices =["150.1.1.1","150.1.2.2","150.1.3.3","150.1.4.4","150.1.5.5","150.1.6.6","192.168.100.129","150.1.8.8","150.1.9.9","150.1.10.10"]
 
-# print(len(allDevices))
 
  
 startbackup(allDevices)
