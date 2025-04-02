@@ -1,0 +1,786 @@
+import smtplib
+import netmiko 
+from netmiko import ConnectHandler
+from datetime import date
+#import threding 
+import sys, time, datetime
+from prettytable import PrettyTable
+import os
+import sys
+import getpass
+import platform
+import  socket
+import  time 
+from pprint import pprint
+from tkinter import filedialog as fd 
+from tkinter import *
+from queue import Queue
+import threading
+import re
+import getpass 
+import pandas as pd
+import platform
+from configparser import ConfigParser 
+from time import sleep 
+# from rich.console import Console
+import smtplib
+import mimetypes
+from email.mime.multipart import MIMEMultipart
+from email import encoders
+from email.message import Message
+from email.mime.audio import MIMEAudio
+from email.mime.base import MIMEBase
+from email.mime.image import MIMEImage
+from email.mime.text import MIMEText
+import pandas as pd
+import logging
+
+
+from tkinter import messagebox
+
+
+breakLoop = False
+
+
+__platform = ((platform.system()))
+
+
+
+
+
+color = {
+    'white':    "\033[1;37m",
+    'yellow':   "\033[1;33m",
+    'green':    "\033[1;32m",
+    'blue':     "\033[1;34m",
+    'cyan':     "\033[1;36m",
+    'red':      "\033[1;31m",
+    'magenta':  "\033[1;35m",
+    'black':      "\033[1;30m",
+    'darkwhite':  "\033[0;37m",
+    'darkyellow': "\033[0;33m",
+    'darkgreen':  "\033[0;32m",
+    'darkblue':   "\033[0;34m",
+    'darkcyan':   "\033[0;36m",
+    'darkred':    "\033[0;31m",
+    'darkmagenta':"\033[0;35m",
+    'darkblack':  "\033[0;30m",
+    'off':        "\033[0;0m"
+}
+
+
+R = '\033[1;31m'
+G = '\033[1;32m'
+Y = '\033[1;33m'
+C = '\033[1;36m'
+W = '\033[1;37m'
+
+
+
+
+CEND      = '\33[0m'
+CBOLD     = '\33[1m'
+CITALIC   = '\33[3m'
+CURL      = '\33[4m'
+CBLINK    = '\33[5m'
+CBLINK2   = '\33[6m'
+CSELECTED = '\33[7m'
+
+
+CBLACKBG  = '\33[40m'
+CREDBG    = '\33[41m'
+CGREENBG  = '\33[42m'
+CYELLOWBG = '\33[43m'
+CBLUEBG   = '\33[44m'
+CVIOLETBG = '\33[45m'
+CBEIGEBG  = '\33[46m'
+CWHITEBG  = '\33[47m'
+
+CGREY    = '\33[90m'
+CRED2    = '\33[91m'
+CGREEN2  = '\33[92m'
+CYELLOW2 = '\33[93m'
+CBLUE2   = '\33[94m'
+CVIOLET2 = '\33[95m'
+CBEIGE2  = '\33[96m'
+CWHITE2  = '\33[97m'
+
+CGREYBG    = '\33[100m'
+CREDBG2    = '\33[101m'
+CGREENBG2  = '\33[102m'
+CYELLOWBG2 = '\33[103m'
+CBLUEBG2   = '\33[104m'
+CVIOLETBG2 = '\33[105m'
+CBEIGEBG2  = '\33[106m'
+CWHITEBG2  = '\33[107m'
+
+fistlogoclor = "\033[1;37m"
+fistlogoclor = "\033[1;34m"
+
+secondlogocolor= "\033[1;94m"
+secondlogocolor= "\033[1;94m"
+
+CBLACK  = '\33[30m'
+CRED    = '\33[31m'
+CGREEN  = '\33[32m'
+CYELLOW = '\33[33m'
+CBLUE   = '\33[34m'
+CVIOLET = '\33[35m'
+CBEIGE  = '\33[36m'
+CWHITE  = '\33[37m'
+
+
+
+
+# from datetime import *
+
+def sendEmail(attachment, body) :
+
+ 
+
+	emailfrom = "donoreply_IseHunter@domaincom"
+
+	recipients = ["example@domain.com","example2@domain.com"]   # define the receipent 
+	emailCc=["excampe@example.com"]    #  this for the CC person 
+	fileToSend = attachment    #   an attachement will auto fill if any open port has been detected : 
+	 
+	msg = MIMEMultipart()
+	msg["From"] = emailfrom
+	msg["To"] = ", ".join(recipients)
+	msg["Cc"] = ", ".join(emailCc)
+	msg["Subject"] = "ISE Activation Port Dialy Report"
+
+	msg.preamble = ""
+
+	if fileToSend =='' :
+		pass 
+	else  : 
+
+		ctype, encoding = mimetypes.guess_type(fileToSend)
+		if ctype is None or encoding is not None:
+		    ctype = "application/octet-stream"
+		maintype, subtype = ctype.split("/", 1)
+		if maintype == "text":
+		    fp = open(fileToSend)
+		    # Note: we should handle calculating the charset
+		    attachment = MIMEText(fp.read(), _subtype=subtype)
+		    fp.close()
+		elif maintype == "image":
+		    fp = open(fileToSend, "rb")
+		    attachment = MIMEImage(fp.read(), _subtype=subtype)
+		    fp.close()
+		elif maintype == "audio":
+		    fp = open(fileToSend, "rb")
+		    attachment = MIMEAudio(fp.read(), _subtype=subtype)
+		    fp.close()
+		else:
+		    fp = open(fileToSend, "rb")
+		    attachment = MIMEBase(maintype, subtype)
+		    attachment.set_payload(fp.read())
+		    fp.close()
+		    encoders.encode_base64(attachment)
+
+
+		attachment.add_header("Content-Disposition", "attachment", filename=fileToSend)
+		msg.attach(attachment)
+
+ 
+	msg.attach(MIMEText(body))
+
+ 
+
+
+	server = smtplib.SMTP("x.x.x.x")   # your SMTP Server IP 
+	server.sendmail(msg["From"], [recipients,emailCc], msg.as_string())
+	server.quit()
+
+
+
+def decrypt(file,password ):
+    global leghtpath
+    import pyAesCrypt
+
+    # print('-' * 80)
+    # password = "'''+str(password)+'''"
+    buffer_size = 512 * 1024
+    pyAesCrypt.decryptFile(str(file), str(os.path.splitext(file)[0]), password, buffer_size)
+
+    filename = W+str(file[:-4]) 
+	os.remove(file)
+
+
+
+def crypt(file,password):
+    global leghtpath
+    # global password , lenfile
+    import pyAesCrypt
+    # lenfile = len(file)
+
+    # print(file) 
+    # print(password)
+    # print('-' * lenfile)
+    password = str(password)
+    buffer_size = 512*1024
+    pyAesCrypt.encryptFile((file), (file) + ".crp", password, buffer_size)
+    os.remove(file)
+
+
+ 
+
+
+
+
+
+
+
+if __platform =="Windows" : 
+
+    os.system('cls')
+else : 
+    os.system('clear')
+
+
+
+
+def extracrtCredentials() :
+
+	global breakLoop
+
+	try :
+
+		# print('start')
+		decrypt('parametre.ini.crp','P@55w0rd')
+		config = ConfigParser()
+		config.read('parametre.ini')
+		firstTime = (config.get('credentials','fisttimeinprogram'))
+		username  = config.get('credentials','username')
+		password  = config.get('credentials','password')
+		# print(username,password)
+		crypt('parametre.ini','P@55w0rd')
+		return username,password
+		
+	except Exception as e  :
+		print(e)
+		hprint(f'{G} [ {W}+ {G}]{R} Print there no saved Configuration  {G} [ {W}+ {G}]{R}')
+
+		hprint(f'{G} [ {W}+ {G}]{W} initialisation in progress ...   {G}[ {W}+ {G}]{W}')
+
+		logging.info('\t[ * ] initialisation configuration')
+
+		messagebox.showerror('Error Credentials','There no Stored Credentials, Please launche the Setup Program Fisrt. \nThen Restart the Program Again ')
+
+
+		breakLoop = False
+		os.system('exit')
+		
+
+ 
+
+
+def hprint(s , speed=8/5000 ):
+    for c in s + '\n':
+        sys.stdout.write(c)
+        sys.stdout.flush()
+        time.sleep(speed)
+
+
+
+ 
+
+
+def main()  : 
+
+	exit = False 
+	if __platform =="Windows" : 
+		os.system('cls')
+	else : 
+		os.system('clear')
+    # print(exit
+	# while not exit : 
+
+	name =f"""
+
+			██╗███████╗ ███████╗   ██╗  ██╗██╗   ██╗███╗   ██╗████████╗███████╗██████╗     
+			██║██╔════╝ ██╔════╝   ██║  ██║██║   ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗    
+			██║███████╗ █████╗     ███████║██║   ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝    
+			██║╚════██║ ██╔══╝     ██╔══██║██║   ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗    
+			██║███████║ ███████╗   ██║  ██║╚██████╔╝██║ ╚████║   ██║   ███████╗██║  ██║    
+			╚═╝╚══════╝ ╚══════╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝    
+                                                                      
+  
+        {W}"""
+
+	print(name)
+	hprint(f'                        {C}Switch Port Authentication Based Hunter{W}')                        
+	print('\n'*2)
+
+
+
+
+
+def loadingAnimation( ) :
+	i = 0 
+	animation = "|/-\\"
+	while True: 
+	    time.sleep(0.1)
+	    sys.stdout.write(f"\r\t {C}Scanning{R} " + animation[i % len(animation)])
+	    sys.stdout.flush()
+	   
+	    i+=1
+
+ 
+def checkIfFirstTime() :
+
+
+	if firstTime =='True' :
+		
+		time.sleep(2) 
+
+		logging.info('\t[ * ] fist time login ')
+		logging.info('\t[ * ] init configuration')
+
+		hprint(f' {R}[ {W}+ {R}]{W} This is the First Time  at this programme   {R}[ {W}+ {R}]  {W} ')
+
+		hprint(f' {R}[ {W}+ {R}]{W} Please Provide the Credentials to get access to the Devices {R}[ {W}+ {R}]  {W}')
+		hprint(f' {R}[ {W}+ {R}]{W}')
+		Configuration_init()
+			
+		logging.info('\t[ * ] init configuration successed')
+
+
+	else  : 
+		
+
+		
+
+		print(f" {R}[{W} * {R}] {C} Loading Saved Configuration Successfully {R}[{W} * {R}] {W}") 
+
+		print('The Scanning Process Has been Started  ')
+		print(R)
+		print('  Scanning ',end='')
+		loadingAnimation()
+
+
+
+
+	 
+
+def hprint(s , speed=8/5000 ):
+	
+	for c in s + '\n':
+		sys.stdout.write(c)
+		sys.stdout.flush()
+		sleep(speed)
+
+ 
+
+
+
+def ListDevices() :
+
+	global breakLoop
+
+
+	try : 
+		file = open('devices.txt','r')
+		Switches = file.readlines()
+		devices = [] 
+
+
+	# print(Switches) 
+
+		for i in Switches : 
+			i = i.replace("\n","")
+			devices.append(i)
+
+	except Exception as e : 
+
+		breakLoop =False
+		messagebox.showerror('No devices List','There No Device List Created.\n\nPlease create a device list and name it devices.txt')
+		pass 
+
+
+
+	
+	return devices
+
+
+
+
+
+interfacesFast =["FastEthernet1/0/1","FastEthernet1/0/2", "FastEthernet1/0/3","FastEthernet1/0/4","FastEthernet1/0/5","FastEthernet1/0/6","FastEthernet1/0/7", 
+                "FastEthernet1/0/8","FastEthernet1/0/9", "FastEthernet1/0/10", "FastEthernet1/0/11", "FastEthernet1/0/12", "FastEthernet1/0/13", "FastEthernet1/0/14", "FastEthernet1/0/15", 
+                "FastEthernet1/0/16",  "FastEthernet1/0/17", "FastEthernet1/0/18", "FastEthernet1/0/19", "FastEthernet1/0/20", "FastEthernet1/0/21","FastEthernet1/0/22", "FastEthernet1/0/23", 
+                "FastEthernet1/0/24", ]
+
+
+ 
+ 
+
+def Configuration_init() : 
+
+
+	username   = input(f'{CRED} [{CWHITE} + {CRED}] {C}Please Provide your Radius username: '+W)
+	password   = getpass.getpass(prompt=R+f'{CRED} [{CWHITE} + {CRED}] {C} Please Provide Your Radius Password : ' +C)
+	password1  = getpass.getpass(prompt=R+f'{CRED} [{CWHITE} + {CRED}] {C} Please Confirme Your Radius Password : ' +C)
+
+	while password !=  password1 : 
+		print()
+		print(f'{CWHITE} [ {CRED}Error {W}]   {CRED}The Provided Password Doesn\'t match') 
+		password   = getpass.getpass(prompt=R+f'{CRED} [{CWHITE} + {CRED}] {C} Please Provide Your Radius Password : ' +C)
+		password1  = getpass.getpass(prompt=R+f'{CRED} [{CWHITE} + {CRED}] {C} Please Confirme Your Radius Password : ' +C)
+
+		logging.info('\t[ * ] Provide password error')
+
+	decrypt('parametre.ini.crp','P@55w0rd')
+
+	config = ConfigParser()
+	config.read('parametre.ini')
+
+	firstTime = config.set('credentials','fistTimeInProgram','False')
+	username  = config.set('credentials','username',username)
+	password  = config.set('credentials','password',password)
+	
+	with open('parametre.ini', 'w') as configfile:
+		config.write(configfile)
+
+
+	crypt('parametre.ini','P@55w0rd')
+
+
+ 
+
+
+
+def activate_Authentication(devices):
+
+	global x , init_directory
+	print()
+	print('Starting The  Scanning Process .... ')
+
+	startTime=(time.time())	
+	
+
+	description=False
+	accessPort=False
+	belogVlan=False
+	authentication=False 
+
+	username = extracrtCredentials()[0]
+	password = extracrtCredentials()[1]
+
+ 
+ 
+	
+
+
+
+	ports={}
+	conditions={}
+	x  = PrettyTable()
+	x1 = PrettyTable()
+
+	x.field_names = [" N° ", "     Device      ", "       Interface       ", "  STATE  "]
+	x1.field_names = [" N° ", "     Device      ", "       Interface       ", "  STATE  "]
+
+	
+	cpt = 0 
+	clear = False
+	tatalPortChecked = 0 
+	body = []
+	notReachable = []
+
+	for device in devices : 
+
+		try : 
+			sshCli = ConnectHandler(
+		    device_type = 'cisco_ios',
+		    host = device,
+		    port = 22,
+		    username =  username,
+		    password =  password
+		    )
+			print('Connected to ',device)
+			# print(password, len(password))
+			clear = False
+
+		except Exception as e  :
+			# print(e) 
+			print('we have an issue to get this device , wrong credentials for : ',device )
+			logging.error(f'\t[ * ] unable to access to the device {device}')
+			time.sleep(10)
+			clear = True 
+
+			# print(f'Can not access to the device : {device}')
+			notReachable.append(device) 
+
+		
+		# print("clear value is ",clear)
+		
+
+		if not clear : 
+
+			# print(' we are here ')
+			ports['interface'] = ['','','','']
+			sshCli.send_command('ter shell',read_timeout=60) 
+			equipementModel = ""
+			# sshCli.send_command('sh ver  | beg Model',read_timeout=60).splitlines()[2]
+	            # sshCli.send_command('clear mac address-table dynamic')
+
+			print (f'{C} [ +  ]  {W} Starting The Scanning Process On Switch : {R}{device}    {C} [ + ] \n {W}') 
+			logging.info(f'\t[ * ] Starting The Scanning Process On Switch : {device}')
+
+
+			intefaceAlias='eth'
+
+			interfacesRange=''
+			interfaces=''
+
+			if equipementModel[-17:] =="WS-C3750V2-24PS-S" : 
+			    allinterfaces =interfacesFast 
+			    intefaceAlias='Fa'
+			else : 
+			    configG1 = sshCli.send_command('terminal shell')
+			    allinterfaces=sshCli.send_command(f'for x in `interface ethernet ` ; do echo $x; done ',read_timeout=60).splitlines()
+
+			for interface in allinterfaces  : 
+				# print(interface)
+				# print(interface)
+				if interface[:18] =='TenGigabitEthernet' or interface[:18] =="GigabitEthernet1/1"  or interface=="GigabitEthernet0/0"  or interface[:18] =="AppGigabitEthernet":
+					pass 
+				else : 
+					
+					tatalPortChecked+=1 
+
+					configG1 = sshCli.send_command(f'sh run int {interface}',read_timeout=60).splitlines() 
+					print(f'\t[ + ]      checking {interface} ...  [ + ]\n')
+					logging.info(f'\t[ + ]      checking {interface} ...  [ + ]\n')
+
+
+					for line in configG1 :
+						# print('checking the configuration ')
+						# print(line, '      ',len(line))
+					    
+						if " description" ==line[:12] : 
+							# print('this port has an description in it ')
+							
+							description=True
+
+						if ' switchport mode access' ==line[:23] : 
+						
+							accessPort = True
+						
+						if ' switchport access vlan' ==line[:23] : 
+							belogVlan = True
+
+						if ' authentication port-control auto' ==line[:34] : 
+							authentication = True
+					# print('the interface config has been checked')
+					if clear : 
+						print('we get you ... !!!! ')
+
+					# print(clear)
+					ports[interface]= [description,accessPort,belogVlan,authentication]
+					# print('appending ', interface)
+					description = False
+					accessPort = False
+					belogVlan = False
+					authentication = False
+			
+			time.sleep(3)			
+ 
+
+
+
+
+
+
+		for k,v in ports.items() : 
+			# print(k,"-----------",v)
+			# print(v[0],v[1],v[2],v[3])
+			if v[0] == True: 
+				pass 
+			elif (v[1] ==True and v[3] ==False ) : 
+
+
+				sshCli.send_config_set([f'interface {k}',' authen port au ','sh ','no sh '],read_timeout=60)
+				# print(k)
+				x.add_row([f'\033[1;37m{cpt}', device, k , R+"Enabled\033[1;37m"])
+				to_append = (cpt, device, k, 'Enabled' )
+				x1.add_row([cpt, device, k, 'Enabled'])
+				body.append(to_append)
+
+				cpt+=1 
+	 
+				ports[k]= [False,True,True,True]
+
+	EndingTime=(time.time())	
+
+
+	executionTime = EndingTime-startTime
+	# print(cpt)
+	from datetime import datetime
+
+
+
+	_date = datetime.now().strftime("%d%m%Y") 
+	week = datetime.now().strftime("week %U of %Y") 
+
+	if  (cpt) == 0:
+		os.system('cls')
+
+		logging.info('\t[ + ] Scannig process done with no open port found ')
+
+		hprint(f'{R}[ {W}+{R} ] {W} Total Port Scanner : {tatalPortChecked}')
+		hprint(f'{R}[ {W}+{R} ] {W} Last Scan Was  :  {str(date.today())}')
+		hprint(f'{R}[ {W}+{R} ] {W} Excecution Time  :  {executionTime} Sec')
+		hprint(f'{R}[ {W}+{R} ] {W} Total Port Where Unactive {cpt}')
+		
+
+		logging.info('\t[ + ] ********************************* [ + ] ')
+		logging.info('\t[ + ] *        Generating Report      * [ + ] ')
+		logging.info('\t[ + ] ********************************* [ + ] ')
+
+		logging.info(f'\t[ + ] Total Port Scanned : {tatalPortChecked}')
+		logging.info(f'\t[ + ] Last Scan Was  :  {str(date.today())}')
+		logging.info(f'\t[ + ] Excecution Time  :  {executionTime} Sec')
+		logging.info(f'\t[ + ] Total Port Where Unactive {cpt}')
+
+
+
+		# message =f'hello,\n Please Ignore it , this is a test '
+		message =f'hello Team,\n\nthis is a weekly genarated genarated report from the ISE port Hunter for the ISE Port\'s Activated for the {week} \n\nWe didn\'t find any unactive access port \n\nbest Regards.  '
+		hprint(f'{R}[{W} + {R}]{W}  Preparing the mail to be send')
+
+		logging.info('\t[ + ] Preparing the Email')
+
+		# sendEmail('', message)
+		hprint(f'{R}[{W} + {R}]{G}  Email has been sent{W}')
+
+		logging.info('\t[ + ] the Email has been sent')
+
+
+	else : 
+		os.system('cls')
+
+		print(G+'...     Interfaces where the authentication where disabled     .... ')
+		print("\033[1;37m.")
+		
+		print(x)
+		logging.info(f'\n\n{x1}\n\n')
+
+
+
+		print('\n'*3) 
+		hprint(f'[ + ] Last Scan Was  :  {str(date.today())}')
+		hprint(f'[ + ] Excecution Time  :  {executionTime} Sec')
+		hprint(f'[ + ] Total Port Scanned :  {tatalPortChecked}')
+		hprint(f'[ + ] Total Port Where Unactive {cpt}')
+
+		logging.info('\t[ + ] Scannig process done with open port(s)   ')
+		
+		logging.info('\t[ + ] ********************************* [ + ] ')
+		logging.info('\t[ + ]         Generating Report         [ + ] ')
+		logging.info('\t[ + ] ********************************* [ + ] ')
+
+		logging.info(f'\t[ + ] Total Port Scanner : {tatalPortChecked}')
+		logging.info(f'\t[ + ] Last Scan Was  :  {str(date.today())}')
+		logging.info(f'\t[ + ] Excecution Time  :  {executionTime} Sec')
+		logging.info(f'\t[ + ] Total Port Where Unactive {cpt}')
+
+		
+
+		init_directory=f'MR_ISE_{_date}.xlsx'
+
+
+		df = pd.DataFrame([body])
+		df = pd.DataFrame(body,  
+	                  columns=['N°', '  DEVICE  ', "       Interface       ", "  STATE  ", ]) 
+		df.to_excel(init_directory)
+	
+		print(f'{R}[ {W}+{R} ] {W}Preparing Email to be send{R}[ {W}+{R} ] {W}')
+		message = f'hello Team,\n\nyou find in attach the weekly report for  ISE Port Activated for the {week} \n\nRegards.  '
+		logging.info('\t[ + ] Preparing the Email')
+		# sendEmail(init_directory,message)
+		logging.info('\t[ + ] the Email has been sent')
+
+		print(f'{R}[ {W}+{R} ] {W}Email Send {R} [{G} OK {R}] {W}')
+
+		if len(notReachable) ==0 : 
+			pass  
+		else  : 
+			print()
+			print()
+			print(f'{R}[ {W}+{R} ] {W} The following Device Were Not Reachable  {R}[ {W}+{R} ] {W}')
+			logging.error(f' [ + ] device that was not Reachable')
+			
+
+			for i in notReachable : 
+				print(f'{R}[ {W}+{R} ] {W}  {i}  {R}[ {W}+{R} ] {W}')
+				logging.error(f' [ + ] {i} [ + ]')
+
+
+
+
+
+
+
+
+
+
+
+from datetime import datetime
+folder = datetime.now().strftime("Log %m %Y")
+ 
+try : 
+	os.mkdir(f'{folder}')
+	logging.info('\t\t Logs Folder Created  :  ok ')
+except Exception as e : 
+	print(e)
+	pass 
+
+day=datetime.now().strftime("%d %m %Y")
+logging.basicConfig(filename=f'{folder}\\{day}.log', encoding='utf-8', level=logging.INFO ,format='%(asctime)s %(message)s')
+logging.debug('[ + ] begin the programme .')
+logging.info('------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
+# logging.warning('')
+logging.error('')	
+print(' logging initiated')
+
+
+
+
+
+
+ 
+
+print('hello ')
+startingTime = datetime.now().strftime("%H%M%S")
+
+main()	
+
+DirtyDevices =ListDevices()
+ 
+
+
+def DeleteSpaces() :
+	devices = [] 
+	# print('deteting spaces')
+	for i in DirtyDevices : 
+		# print(i)
+		if i =='' : 
+			pass 
+		else : 
+			devices.append(i)
+	return devices
+
+
+devices = DeleteSpaces()
+
+
+	 	 
+activate_Authentication(devices)
+
+		 
+
+
